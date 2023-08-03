@@ -55,10 +55,13 @@ let send = async () => {
 
     wordHolder.value = '等待中...'; messageArea.value!.scrollTop = messageArea.value!.scrollHeight + 100;
     if (maxBtnVal.value === '最小化输入框') maxInput();
-    const assistantMessage: Message[] = await $fetch('/api/chat', {
+    let assistantMessage: Message[] | null;
+    const { data } = await useFetch('/api/chat', {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            "Authorization": `Basic 1313131313131==`,
+            'Content-Type': 'application/json',
+
         },
         body: JSON.stringify({
             "messages": messages.value,
@@ -67,6 +70,7 @@ let send = async () => {
             "model": "gpt-3.5-turbo"
         })
     })
+    assistantMessage = data.value;
     console.log(assistantMessage);
     messages.value.push(assistantMessage[0]);
     wordHolder.value = '输入内容，按enter回车发送';
