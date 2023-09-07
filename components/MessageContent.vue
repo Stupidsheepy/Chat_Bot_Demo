@@ -16,31 +16,15 @@
     </div>
 </template>
 <script setup lang='ts'>
+import createTimeBlock from '@/utils/timeBlock'
 const { message } = defineProps(['message'])
 // create send or receive time 
-let createTimeBlock = () => {
-    let time = new Date();
-    let year = time.getFullYear();
-    let month = time.getMonth() + 1;
-    let date = time.getDate();
-    let hour = time.getHours();
-    let minute = time.getMinutes();
-    let monthStr = month.toString();
-    let dateStr = date.toString();
-    let hourStr = hour.toString();
-    let minuteStr = minute.toString();
-    if (month < 10) monthStr = '0' + month.toString();
-    if (date < 10) dateStr = '0' + date.toString();
-    if (hour < 10) hourStr = '0' + hour.toString();
-    if (minute < 10) minuteStr = '0' + minute.toString();
-    let current_time = `${year}/${monthStr}/${dateStr} ${hourStr}:${minuteStr}`;
-    // console.log(current_time);
-    return current_time;
-}
 
 
 </script>
 <style lang='scss' scoped>
+$message-color : #272727;
+
 .role {
     /* why there is max-width */
     width: 100%;
@@ -58,35 +42,36 @@ let createTimeBlock = () => {
     height: 50px;
     border: 1px solid white;
     border-radius: 100%;
-    background: url("/images/bot.png") center center / cover no-repeat dodgerblue;
+    background: url("/images/bot.png") center center / cover no-repeat $message-color ;
 
 }
 
 .user-avatar-ball {
-    background: url("/images/user.png") center center / cover no-repeat dodgerblue;
+    background: url("/images/user.png") center center / cover no-repeat $message-color ;
 }
 
 div.user {
-    background-color: dodgerblue;
+    background-color: $message-color;
     margin-left: auto;
     margin-right: 0;
 }
 
 div.assistant {
-    background-color: pink;
-    color: black;
+    background-color: $message-color ;
+    color: white;
 }
 
 .message-bubble {
     /* TODO changed by js roles user or assistant */
-
     border-radius: 1rem;
     padding: 1rem;
     margin: 1rem 0;
-    max-width: 50%;
     font-size: 1rem;
     color: white;
     position: relative;
+    max-width: 50%;
+    // 设置宽度后换行
+    word-break: break-all;
 }
 
 .user-avatar-ball .timeBlock,
@@ -117,13 +102,13 @@ div.assistant {
     right: -0.5rem;
     width: 1rem;
     height: 1rem;
-    background-color: dodgerblue;
+    background-color: $message-color ;
     transform: translateY(0%) translateX(-20%) rotate(60deg);
 }
 
 .message-bubble.assistant::after {
     left: -0.5rem;
-    background-color: pink;
+    background-color: $message-color;
     transform: translateY(0%) translateX(20%) rotate(-60deg);
 }
 

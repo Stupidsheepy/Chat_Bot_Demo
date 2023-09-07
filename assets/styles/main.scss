@@ -1,6 +1,8 @@
 $background-color: #313338;
 $input-color: #383a40;
 $scroll-color: #5c5e65;
+$message-color: #272727;
+$button-color: #3a3a3a;
 * {
     box-sizing: border-box;
     scroll-behavior: smooth;
@@ -31,5 +33,5 @@ textarea {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: grey;
+    background: $scroll-color;
 }

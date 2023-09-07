@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="message-area" ref="messageArea">
-            <div class="message-content" v-for="item in messages">
+            <div class="message-content" v-for="item in messages" ref="contentsRef">
                 <MessageContent :message="item"></MessageContent>
             </div>
         </div>
@@ -22,18 +22,24 @@
     </div>
 </template>
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 interface Message {
     content: string;
     role: string
 }
+const contentsRef = ref<HTMLDivElement[]>([]);
 let tempBtnInput = ref('');
 let tempBtnInputElement = ref<HTMLInputElement>();
 let temperature = ref(0.7);
 let generateCount = ref(1);
 let wordHolder = ref('输入内容，按enter回车发送');
+
+let msgArea = ref<HTMLDivElement>();
+
+
 let messageArea = ref<HTMLDivElement>();
-const messages = ref<Message[]>([]);
+const messages = ref<Message[]>([
+]);
 const maxBtnVal = ref('最大化输入框');
 let maxInput = () => {
     if (maxBtnVal.value === '最大化输入框') {
@@ -46,23 +52,23 @@ let maxInput = () => {
 }
 const currentMessage = ref('');
 const textArea = ref<HTMLTextAreaElement>();
+
+
 let send = async () => {
     messages.value.push(
         { content: currentMessage.value, role: 'user' }
     );
     textArea.value?.blur();
     currentMessage.value = '';
-
-    wordHolder.value = '等待中...'; messageArea.value!.scrollTop = messageArea.value!.scrollHeight + 100;
+    wordHolder.value = '等待中...';
+    // 这里也需要
+    nextTick(() => {
+        messageArea.value!.scrollTop = 9999999;
+    })
     if (maxBtnVal.value === '最小化输入框') maxInput();
     let assistantMessage: Message[] | null;
     const { data } = await useFetch('/api/chat', {
         method: "POST",
-        headers: {
-            "Authorization": `Basic 1313131313131==`,
-            'Content-Type': 'application/json',
-
-        },
         body: JSON.stringify({
             "messages": messages.value,
             "temperature": temperature.value,
@@ -70,13 +76,16 @@ let send = async () => {
             "model": "gpt-3.5-turbo"
         })
     })
+    // console.log(data.value);
+    // console.log(data);
     assistantMessage = data.value;
-    console.log(assistantMessage);
-    messages.value.push(assistantMessage[0]);
+    messages.value.push(assistantMessage![0]);
     wordHolder.value = '输入内容，按enter回车发送';
-    messageArea.value!.scrollTop =
-        messageArea.value!.scrollHeight + 100;
+    // ！！使用nextTick解决scrollTop问题
+    await nextTick()
+    messageArea.value!.scrollTop = 99999999
 }
+
 let setTemp = () => {
     if (tempBtnInput.value === '') {
         temperature.value = 0.7;
@@ -86,12 +95,16 @@ let setTemp = () => {
     tempBtnInputElement.value!.readOnly = true;
 }
 
+
+
 // set title: 
 useHead({
     title: "Chat-bot"
 })
 </script>
 <style lang='scss' scoped>
+$button-color: #3a3a3a;
+
 .container {
     display: flex;
     flex-direction: column;
@@ -187,7 +200,7 @@ textarea {
 }
 
 .max-btn {
-    background-color: dodgerblue;
+    background-color: $button-color;
     color: white;
     padding: 0.5rem;
     border-radius: 0.5rem;

@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
         },
         body: JSON.stringify(body),
     });
-
+    console.log("new response")
     return response.choices.map((choice) => {
         return choice.message;
     })
